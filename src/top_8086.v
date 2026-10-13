@@ -37,13 +37,14 @@ module top_8086 (
     wire [19:0] mem_addr; 
     wire [15:0] mem_wdata, mem_rdata;
     wire [15:0] sp, bp, si, di; 
+    wire [15:0] cs_bus, ds_bus, ss_bus, es_bus;
     wire        cf, pf, af, zf, sf, oflag;
 
     biu_8086 biu (
         .clk(clk),
         .reset(reset),
         .ready(ready),
-        .cs(16'h0000),
+        .cs(cs_bus),
         .fetch_ip(ip),
         .redirect(redirect),
         .redirect_ip(redirect_ip),
@@ -93,6 +94,10 @@ module top_8086 (
         .bp(bp),
         .si(si),
         .di(di),
+        .cs_out(cs_bus),
+        .ds_out(ds_bus),
+        .ss_out(ss_bus),
+        .es_out(es_bus),
         .cf(cf),
         .pf(pf),
         .af(af),

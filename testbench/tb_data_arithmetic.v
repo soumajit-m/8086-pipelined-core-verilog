@@ -67,9 +67,14 @@ module tb_data_arithmetic;
         $display("-------------------------------------------------");
         $display("DATA & ARITHMETIC TEST COMPLETE");
         $display("Expected AX: 2345, Actual AX: %h", ax);
-        if (ax == 16'h2345) $display("RESULT: PASS");
-        else $display("RESULT: FAIL");
-        $display("-------------------------------------------------");
+        if (ax == 16'h2345) begin
+            $display("==================================================");
+            $display("[TEST PASSED] tb_data_arithmetic: MOV & ADD execution verified!");
+            $display("==================================================");
+        end else begin
+            $display("[TEST FAILED] tb_data_arithmetic: AX mismatch!");
+            $fatal(1, "Data arithmetic assertion failed");
+        end
         $finish;
     end
 

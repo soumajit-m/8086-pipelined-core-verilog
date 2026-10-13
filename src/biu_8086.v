@@ -38,7 +38,8 @@ module biu_8086 (
     output reg  [31:0] wait_cycles
 );
 
-    reg [7:0] memory[0:1048575]; 
+    parameter MEM_SIZE = 2048;
+    reg [7:0] memory[0:MEM_SIZE-1]; 
     reg [15:0] fetch_offset; 
     reg [7:0]  enqueue_data; 
     reg        enqueue;
@@ -135,11 +136,11 @@ module biu_8086 (
 
                 if (bc_done) begin
                     if (op_write) begin 
-                        memory[op_addr] <= op_wdata[7:0]; 
-                        if (op_word) memory[(op_addr + 1'b1) & 20'hfffff] <= op_wdata[15:8]; 
+                        memory[op_addr % MEM_SIZE] <= op_wdata[7:0]; 
+                        if (op_word) memory[(op_addr + 1'b1) % MEM_SIZE] <= op_wdata[15:8]; 
                     end else begin 
-                        mem_rdata[7:0]  <= memory[op_addr]; 
-                        mem_rdata[15:8] <= op_word ? memory[(op_addr + 1'b1) & 20'hfffff] : 8'b0; 
+                        mem_rdata[7:0]  <= memory[op_addr % MEM_SIZE]; 
+                        mem_rdata[15:8] <= op_word ? memory[(op_addr + 1'b1) % MEM_SIZE] : 8'b0; 
                     end
                     
                     mem_ready       <= 1'b1; 
@@ -149,7 +150,7 @@ module biu_8086 (
             end 
             else if (!next_will_be_full && !flush) begin 
                 last_fetch_address <= ({cs, 4'b0} + {4'b0, fetch_offset}) & 20'hfffff;
-                enqueue_data       <= memory[({cs, 4'b0} + {4'b0, fetch_offset}) & 20'hfffff]; 
+                enqueue_data       <= memory[((({cs, 4'b0} + {4'b0, fetch_offset}) & 20'hfffff) % MEM_SIZE)]; 
                 enqueue            <= 1'b1; 
                 fetch_offset       <= fetch_offset + 1'b1; 
                 fetch_cycles       <= fetch_cycles + 1'b1;

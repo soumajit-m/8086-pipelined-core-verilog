@@ -54,9 +54,14 @@ module tb_control_flow;
         $display("-------------------------------------------------");
         $display("CONTROL FLOW TEST COMPLETE");
         $display("Expected IP at HALT: 0007, Actual IP: %h", ip);
-        if (ip == 16'h0007) $display("RESULT: PASS");
-        else $display("RESULT: FAIL");
-        $display("-------------------------------------------------");
+        if (ip == 16'h0007) begin
+            $display("==================================================");
+            $display("[TEST PASSED] tb_control_flow: Flag set/clear & branch skip verified!");
+            $display("==================================================");
+        end else begin
+            $display("[TEST FAILED] tb_control_flow: IP mismatch!");
+            $fatal(1, "Control flow assertion failed");
+        end
         $finish;
     end
 

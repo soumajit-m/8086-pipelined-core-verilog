@@ -1,0 +1,25 @@
+name: 8086 Core CI Regression
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  simulate:
+    name: Icarus Verilog Simulation Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+
+      - name: Run Complete Testbench Suite
+        run: |
+          chmod +x scripts/run.sh
+          ./scripts/run.sh all

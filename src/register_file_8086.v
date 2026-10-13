@@ -70,7 +70,7 @@ module register_file_8086 (
         if (reset) begin 
             for (i = 0; i < 8; i = i + 1) r[i] <= 16'b0; 
             for (i = 0; i < 4; i = i + 1) s[i] <= 16'b0; 
-            s[1] <= 16'hFFFF; 
+            s[1] <= 16'h0000; 
         end else begin
             if (write_enable) begin
                 r[write_reg] <= write_data;

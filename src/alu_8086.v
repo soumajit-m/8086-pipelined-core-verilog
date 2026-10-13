@@ -40,28 +40,32 @@ module alu_8086 (
                 r = tmp[15:0]; 
                 flags[0] = width8 ? tmp[8] : tmp[16]; 
                 flags[2] = ((mask_a[3:0] + mask_b[3:0]) > 15); 
-                flags[5] = (~(mask_a[15] ^ mask_b[15])) & (mask_a[15] ^ r[15]); 
+                flags[5] = width8 ? ((~(mask_a[7] ^ mask_b[7])) & (mask_a[7] ^ r[7])) :
+                                    ((~(mask_a[15] ^ mask_b[15])) & (mask_a[15] ^ r[15])); 
             end
             4'h1: begin // ADC
                 tmp = {1'b0, mask_a} + {1'b0, mask_b} + carry_in; 
                 r = tmp[15:0]; 
                 flags[0] = width8 ? tmp[8] : tmp[16]; 
                 flags[2] = ((mask_a[3:0] + mask_b[3:0] + carry_in) > 15); 
-                flags[5] = (~(mask_a[15] ^ mask_b[15])) & (mask_a[15] ^ r[15]); 
+                flags[5] = width8 ? ((~(mask_a[7] ^ mask_b[7])) & (mask_a[7] ^ r[7])) :
+                                    ((~(mask_a[15] ^ mask_b[15])) & (mask_a[15] ^ r[15])); 
             end
             4'h2: begin // SUB
                 tmp = {1'b0, mask_a} - {1'b0, mask_b}; 
                 r = tmp[15:0]; 
-                flags[0] = mask_a < mask_b; 
+                flags[0] = width8 ? (mask_a[7:0] < mask_b[7:0]) : (mask_a < mask_b); 
                 flags[2] = mask_a[3:0] < mask_b[3:0]; 
-                flags[5] = (mask_a[15] ^ mask_b[15]) & (mask_a[15] ^ r[15]); 
+                flags[5] = width8 ? ((mask_a[7] ^ mask_b[7]) & (mask_a[7] ^ r[7])) :
+                                    ((mask_a[15] ^ mask_b[15]) & (mask_a[15] ^ r[15])); 
             end
             4'h3: begin // SBB
                 tmp = {1'b0, mask_a} - {1'b0, mask_b} - carry_in; 
                 r = tmp[15:0]; 
-                flags[0] = mask_a < (mask_b + carry_in); 
+                flags[0] = width8 ? (mask_a[7:0] < (mask_b[7:0] + carry_in)) : (mask_a < (mask_b + carry_in)); 
                 flags[2] = mask_a[3:0] < (mask_b[3:0] + carry_in); 
-                flags[5] = (mask_a[15] ^ mask_b[15]) & (mask_a[15] ^ r[15]); 
+                flags[5] = width8 ? ((mask_a[7] ^ mask_b[7]) & (mask_a[7] ^ r[7])) :
+                                    ((mask_a[15] ^ mask_b[15]) & (mask_a[15] ^ r[15])); 
             end
             4'h4: r = mask_a & mask_b; // AND
             4'h5: r = mask_a | mask_b; // OR
@@ -70,7 +74,7 @@ module alu_8086 (
             4'h8: begin // SHL
                 r = mask_a << 1; 
                 flags[0] = width8 ? mask_a[7] : mask_a[15]; 
-                flags[5] = r[15] ^ flags[0]; 
+                flags[5] = width8 ? (r[7] ^ flags[0]) : (r[15] ^ flags[0]); 
             end
             4'h9: begin // SHR
                 r = mask_a >> 1; 
@@ -79,9 +83,9 @@ module alu_8086 (
             end
             4'ha: begin // NEG
                 r = ~mask_a + 1'b1; 
-                flags[0] = (mask_a != 16'b0); 
+                flags[0] = width8 ? (mask_a[7:0] != 8'b0) : (mask_a != 16'b0); 
                 flags[2] = (mask_a[3:0] != 4'b0); 
-                flags[5] = (mask_a == 16'h8000); 
+                flags[5] = width8 ? (mask_a[7:0] == 8'h80) : (mask_a == 16'h8000); 
             end
             default: r = mask_a;
         endcase

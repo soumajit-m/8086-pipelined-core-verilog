@@ -54,9 +54,14 @@ module tb_stack_ops;
         $display("-------------------------------------------------");
         $display("STACK OPERATIONS TEST COMPLETE");
         $display("Expected BX: 55AA, Actual BX: %h", bx);
-        if (bx == 16'h55AA) $display("RESULT: PASS");
-        else $display("RESULT: FAIL");
-        $display("-------------------------------------------------");
+        if (bx == 16'h55AA) begin
+            $display("==================================================");
+            $display("[TEST PASSED] tb_stack_ops: PUSH & POP memory sequence verified!");
+            $display("==================================================");
+        end else begin
+            $display("[TEST FAILED] tb_stack_ops: BX mismatch!");
+            $fatal(1, "Stack operations assertion failed");
+        end
         $finish;
     end
 

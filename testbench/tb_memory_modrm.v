@@ -59,11 +59,14 @@ module tb_memory_modrm;
         $display("Expected Memory [0010]: 34, Actual: %h", uut.biu.memory[20'h00010]);
         $display("Expected Memory [0011]: 12, Actual: %h", uut.biu.memory[20'h00011]);
         
-        if (uut.biu.memory[20'h00010] == 8'h34 && uut.biu.memory[20'h00011] == 8'h12)
-            $display("RESULT: PASS");
-        else 
-            $display("RESULT: FAIL");
-        $display("-------------------------------------------------");
+        if (uut.biu.memory[20'h00010] == 8'h34 && uut.biu.memory[20'h00011] == 8'h12) begin
+            $display("==================================================");
+            $display("[TEST PASSED] tb_memory_modrm: 16-bit ModR/M memory write verified!");
+            $display("==================================================");
+        end else begin
+            $display("[TEST FAILED] tb_memory_modrm: Memory write mismatch!");
+            $fatal(1, "Memory addressing assertion failed");
+        end
         $finish;
     end
 
